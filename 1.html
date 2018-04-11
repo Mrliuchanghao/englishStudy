@@ -1,0 +1,159 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>bbjj</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="copyright" content="">
+    <style>
+        #box_img{
+            position: relative;
+            width: 90%;
+            top: 0;
+            left: 5%;
+        }
+        .box .content span{
+            margin-right: 2px;
+            font-size: 1.2em;
+        }
+        .box .content span.actived{
+            font-size: 1.4em;
+            color: #FF2621;
+
+        }
+        .box .content span.dblactived{
+            font-size: 1.4em;
+            color: #519dd3;
+        }
+        .box .btn{
+            text-align: center;
+            width: 30%;
+            position: relative;
+            top: 0;
+            left: 35%;
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 10px;
+            background-color: #519dd3;
+            color: #fff;
+        }
+    </style>
+
+
+</head>
+<body>
+<div class="box">
+    <img src="img/1.png" id="box_img" alt="">
+    <div class="content">
+    </div>
+    <div class="btn">查看单词序号</div>
+</div>
+</body>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script>
+    var Toast = function(config){
+        this.context = config.context==null?$('body'):config.context;//上下文
+        this.message = config.message;//显示内容
+        this.time = config.time==null?6000:config.time;//持续时间
+        this.left = config.left;//距容器左边的距离
+        this.top = config.top;//距容器上方的距离
+        this.init();
+    }
+    var msgEntity;
+    Toast.prototype = {
+        //初始化显示的位置内容等
+        init : function(){
+            $("#toastMessage").remove();
+            //设置消息体
+            var msgDIV = new Array();
+            msgDIV.push('<div id="toastMessage">');
+            msgDIV.push('<span>'+this.message+'</span>');
+            msgDIV.push('</div>');
+            msgEntity = $(msgDIV.join('')).appendTo(this.context);
+            //设置消息样式
+            var left = this.left == null ? this.context.width()/2-msgEntity.find('span').width()/2 : this.left;
+            var top = this.top == null ? '20px' : this.top;
+            msgEntity.css({position:'absolute',top:top,'z-index':'99',left:left,'background-color':'black',color:'white','font-size':'18px',padding:'10px',margin:'10px'});
+            msgEntity.hide();
+        },
+        //显示动画
+        show :function(){
+            msgEntity.fadeIn(3000);
+            setTimeout(function () {
+                msgEntity.fadeOut(3000);
+            },5000)
+        }
+
+    }
+    
+    var strSpan='';
+    var strArr=['Then,','the','builders','close','up','the','walls','and','ceilings.','Now','the','floors','can','be','covered','and','the','walls','can','be','painted.']
+    for(var i=0;i<strArr.length;i++){
+        strSpan+='<span>'+strArr[i]+' </span>';
+    }
+    $('.content').html(strSpan);
+    var $span= $('.content span');
+    for(var i=0;i<$span.length;i++){
+        if(i%2==1){
+            $span.eq(i).addClass('actived');
+        }
+    }
+    var touchtime = new Date().getTime();
+    var tempObj;
+    $('.content span').on("click", function(){
+        if( new Date().getTime() - touchtime < 500 ){
+            if($(this).index()!=tempObj){
+                return
+            }
+            if($(this).hasClass('actived')){
+                $(this).removeClass('actived');
+            }
+            if($(this).hasClass('dblactived')){
+                $(this).removeClass('dblactived');
+            }else{
+                $(this).addClass('dblactived');
+            }
+        }else{
+            tempObj=$(this).index();
+            touchtime = new Date().getTime();
+            if($(this).hasClass('actived')){
+                $(this).removeClass('actived')
+            }else{
+                $(this).addClass('actived');
+            }
+        }
+    });
+
+    $('.box .btn').on('click',function () {
+        var str='';
+        var douhao=',';
+        $('.content span.actived').each(function (i,z) {
+            if(i==0)
+            str+='红色单词序号为：';
+            if(i== $('.content span.actived').length-1){
+                str+= $(z).index()+';';
+            }else {
+                str+=$(z).index()+douhao;
+            }
+        });
+        $('.content span.dblactived').each(function (i,z) {
+            if(i==0)
+            str+='蓝色单词序号为：';
+            if(i== $('.content span.dblactived').length-1){
+                str+= $(z).index()+'';
+            }else {
+                str+=$(z).index()+douhao;
+            }
+        })
+        if(str)
+        new Toast({context:$('body'),message:str}).show();
+    })
+
+
+
+</script>
+</html>
